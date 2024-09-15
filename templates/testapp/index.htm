@@ -1,0 +1,83 @@
+<h2>Добавление продукта</h2>
+<form method="dialog">
+    {{form.as_p}}
+    <input type="submit" id="btn" value="Add" onclick="insData('/insertdata')"/>
+</form>
+<div id="message"></div>
+<h2>Список продуктов</h2>
+<div id="tList"></div>
+
+<script>
+    function insData(url){
+        const len_name=id_pName.value.length
+        const len_price=id_pPrice.value.length
+        if (len_name>0 & len_price>0){
+            const xhr=new XMLHttpRequest();
+            xhr.open("post",url,true);
+            xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            const len_name=id_pName.value.length
+            const len_price=id_pPrice.value.length
+            var json = JSON.stringify({
+                name: id_pName.value,
+                description: id_pDescription.value,
+                price: id_pPrice.value
+            });
+            xhr.responseType="json";
+            xhr.send(json);
+            xhr.onload = function() {
+                if (xhr.status != 200) {
+                    message.innerHTML='Error: ' + xhr.status;
+                    return;
+                };
+                const mess=xhr.response.mess
+                if (mess!='ok' & len_name>0 & len_price>0){
+                    message.innerHTML='Warning: '+mess;
+                }
+                else{
+                    if (len_name>0 & len_price>0){
+                        getData('/getdata')
+                        id_pName.value='';
+                        id_pDescription.value='';
+                        id_pPrice.value=''
+                        message.innerHTML='Ok! Product was added';
+                    }
+                    else{
+                        message.innerHTML='';
+                    };
+                };
+            return;
+        };
+        xhr.onerror = function() {
+            message.innerHTML='Error'+ xhr.status;
+        };
+        };
+    }
+
+    function getData(url){
+        const xhr=new XMLHttpRequest();
+        xhr.open("get",url);
+        xhr.responseType="json";
+        xhr.send();
+        xhr.onload = function() {
+            if (xhr.status != 200) {
+                message.innerHTML='Error: ' + xhr.status;
+                return;
+            };
+            const list=xhr.response.rec
+            var i=0
+            let trecs='<table><thead><tr><th>Name</th><th>Description</th><th>Price</th></tr></thead><tbody>'
+            for (const l in list){
+                trecs=trecs+'<tr><td>'+list[i][0]+'</td><td>'+list[i][1]+'</td><td>'+list[i][2]+'</td></tr>'
+                i++
+            };
+            trecs=trecs+'</tbody></table>'
+            tList.innerHTML=trecs;
+            return;
+        };
+        xhr.onerror = function() {
+            message.innerHTML='Error'+ xhr.status;
+        };
+    }
+
+    getData('/getdata')
+</script>
