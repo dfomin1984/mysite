@@ -9,9 +9,10 @@
 
 <script>
     function insData(url){
-        const len_name=id_pName.value.length
-        const len_price=id_pPrice.value.length
-        if (len_name>0 & len_price>0){
+        const len_name=id_pName.value.length;
+        const len_price=id_pPrice.value.length;
+        const price=parseFloat(id_pPrice.value);
+        if (len_name>0 & len_price>0 & price>0){
             const xhr=new XMLHttpRequest();
             xhr.open("post",url,true);
             xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
